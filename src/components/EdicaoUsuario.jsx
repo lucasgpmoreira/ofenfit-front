@@ -1,18 +1,24 @@
-import {IconChevronDown, IconChevronUp, IconCircleCheck, IconExclamationCircle, IconLoader2} from "@tabler/icons-react";
+import {
+    IconChevronDown,
+    IconChevronUp,
+    IconCircleCheck,
+    IconExclamationCircle,
+    IconLoader2,
+    IconMoodEdit
+} from "@tabler/icons-react";
 import {useState} from "react";
-import {postUser} from "../api/api.js";
+import {editUser} from "../api/api.js";
 
-const CadastroUsuario = ({refresh, setRefresh}) => {
+const EdicaoUsuario = ({usuario, refresh, setRefresh}) => {
     const [openedCadastro, setOpenedCadastro] = useState(false)
     const [loading, setLoading] = useState(false)
     const [successMessage, setSuccessMessage] = useState(false)
     const [errorMessage, setErrorMessage] = useState(false)
 
-    const [nome, setNome] = useState("")
-    const [email, setEmail] = useState("")
-    const [cpf, setCpf] = useState("")
-    const [dataNascimento, setDataNascimento] = useState("")
-    const [diasOfensiva, setDiasOfensiva] = useState(0)
+    const [nome, setNome] = useState(usuario.nome)
+    const [email, setEmail] = useState(usuario.email)
+    const [cpf, setCpf] = useState(usuario.cpf)
+    const [diasOfensiva, setDiasOfensiva] = useState(usuario.diasDeOfensiva)
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -23,7 +29,7 @@ const CadastroUsuario = ({refresh, setRefresh}) => {
 
         const fetchUserData = async () => {
             try {
-                const response = await postUser(nome, email, cpf, dataNascimento, diasOfensiva);
+                const response = await editUser(usuario.id ,nome, email, cpf, usuario.dataNascimento, diasOfensiva, usuario.congelado);
                 console.log(response);
                 setLoading(false);
                 setSuccessMessage(true);
@@ -36,7 +42,6 @@ const CadastroUsuario = ({refresh, setRefresh}) => {
 
         fetchUserData().then(setRefresh(!refresh));
 
-        console.log(nome, email, cpf, dataNascimento);
     }
 
     return (
@@ -44,29 +49,24 @@ const CadastroUsuario = ({refresh, setRefresh}) => {
             <button
                 onClick={() => setOpenedCadastro(!openedCadastro)}
                 className={"bg-customGreen-mid gap-0.5 text-amber-50 px-2 py-1 flex items-center rounded-md font-semibold mb-1"}>
-                Cadastrar novo player
+                <IconMoodEdit size={20}/>
+                Editar o player
                 {openedCadastro ? <IconChevronUp size={20}/> : <IconChevronDown size={20}/>}
             </button>
             <div
-                className={`p-4 border-gray-300 rounded border-2 w-100 ${openedCadastro ? "scale-y-100 h-100" : "scale-y-0 h-0"} transform transition-all origin-top duration-500 ease-in-out`}>
+                className={`p-4 mb-8 border-gray-300 rounded border-2 w-100 ${openedCadastro ? "scale-y-100 h-100" : "scale-y-0 h-0"} transform transition-all origin-top duration-500 ease-in-out`}>
                 <form className={"flex flex-col gap-2"} onSubmit={handleSubmit}>
                     <div className={"flex flex-col md:flex-row gap-2"}>
-                        <input type="text" placeholder="Nome" className={"border-2 rounded-md p-1 w-full"}
+                        <input type="text" value={nome} placeholder="Nome" className={"border-2 rounded-md p-1 w-full"}
                                onChange={(e) => setNome(e.target.value)}/>
-                        <input type="email" placeholder="Email" className={"border-2 rounded-md p-1 w-full"}
+                        <input type="email" value={email} placeholder="Email" className={"border-2 rounded-md p-1 w-full"}
                                onChange={(e) => setEmail(e.target.value)}/>
                     </div>
 
-                    <div className={"flex flex-col md:flex-row gap-2"}>
-                        <input type="text" placeholder="CPF" className={" w-full border-2 rounded-md p-1"}
+                    <div className={"flex gap-2"}>
+                        <input type="text" value={cpf} placeholder="CPF" className={" w-full border-2 rounded-md p-1"}
                                onChange={(e) => setCpf(e.target.value)}/>
-                        <input type="date" placeholder="Data de nascimento"
-                               className={" w-full border-2 rounded-md p-1"} onChange={(e) => {
-                            const dataN = e.target.value;
-                            const [year, month, day] = dataN.split('-');
-                            setDataNascimento(`${day}/${month}/${year}`);
-                        }}/>
-                        <input type={"number"} min={0} placeholder={"Dias de ofensiva"}
+                        <input type={"number"} min={0} placeholder={"Dias de ofensiva"} value={diasOfensiva}
                                className={"w-full border-2 rounded-md p-1"}
                                onChange={(e) => setDiasOfensiva(e.target.value)}/>
                     </div>
@@ -74,17 +74,17 @@ const CadastroUsuario = ({refresh, setRefresh}) => {
 
                     <button type="submit"
                             className={"bg-customGreen-mid text-amber-50 px-2 py-1 rounded-md font-semibold flex"}>
-                        Cadastrar
+                        Editar
                         {loading && <div className={"animate-spin ml-2"}><IconLoader2/></div>}
                     </button>
 
 
                     {successMessage && <div
                         className={"text-green-900 bg-green-200 p-2 rounded-md border-2 border-green-600 flex gap-2"}>
-                        <IconCircleCheck/> Usuário cadastrado com sucesso!</div>}
+                        <IconCircleCheck/> Usuário editado com sucesso!</div>}
                     {errorMessage &&
                         <div className={"text-red-500 bg-red-100 p-2 rounded-md border-2 border-red-300 flex gap-2"}>
-                            <IconExclamationCircle/> Erro ao cadastrar usuário!</div>}
+                            <IconExclamationCircle/> Erro ao editar usuário!</div>}
 
                 </form>
             </div>
@@ -92,4 +92,4 @@ const CadastroUsuario = ({refresh, setRefresh}) => {
     );
 };
 
-export default CadastroUsuario;
+export default EdicaoUsuario;

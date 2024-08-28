@@ -27,8 +27,32 @@ export const deleteUser = async (id) => {
     return await api.delete(`/clientes/${id}`);
 }
 
+export const editUser = async (id, nome, email, cpf, dataNascimento, diasOfensiva, congelado) => {
+    return await api.put(`/clientes/${id}`, {
+        nome: nome,
+        email: email,
+        cpf: cpf,
+        dataNascimento: dataNascimento,
+        diasDeOfensiva: diasOfensiva,
+        congelado: congelado,
+    });
+}
+
+export const buscarCliente = async (nome = '', cpf = '') => {
+    return await api.get('/clientes/buscar', {
+        params: {
+            nome,
+            cpf,
+        },
+    });
+}
+
 export const freezeUser = async (id) => {
-    return await api.patch(`/clientes/${id}/congelado`, {congelado: true});
+    return await api.patch(`/clientes/${id}/congelado?congelado=true`);
+}
+
+export const unfreezeUser = async (id) => {
+    return await api.patch(`/clientes/${id}/congelado?congelado=false`);
 }
 
 export const resetUser = async (id) => {
