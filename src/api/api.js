@@ -39,6 +39,8 @@ export const editUser = async (id, nome, email, cpf, dataNascimento, diasOfensiv
 }
 
 export const buscarCliente = async (nome = '', cpf = '') => {
+
+    console.log(nome, cpf);
     return await api.get('/clientes/buscar', {
         params: {
             nome,

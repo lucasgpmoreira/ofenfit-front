@@ -12,12 +12,23 @@ function App() {
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
+
         const fetchListaUsuarios = async () => {
             try {
-                const response = searchTerm === "" ? await getUsers() : await buscarCliente(searchTerm);
+                let response;
+                if (searchTerm === "") {
+                    response = await getUsers();
+                } else {
+                    if (!isNaN(searchTerm)) {
+                        response = await buscarCliente('', searchTerm);
+                    } else {
+                        response = await buscarCliente(searchTerm);
+                    }
+                }
                 setListaUsuarios(response.data);
-                console.log(listaUsuarios);
+                console.log(response.data);
             } catch (err) {
+                setListaUsuarios([])
                 console.log(err);
             }
         };
